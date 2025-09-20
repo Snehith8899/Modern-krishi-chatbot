@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "ModernKrishiChatbotApp",
+    "name": "ModernKrishiChatbot",
     "slug": "ModernKrishiChatbotApp",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,17 +13,29 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.modernkrishibot.app",
+      "buildNumber": "1.0.0",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "package": "com.modernkrishibot.app",
+      "versionCode": 1,
       "edgeToEdgeEnabled": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "87f1f3a4-961e-4955-a3f7-afeee6ebadbf"
+      }
     }
   }
 }

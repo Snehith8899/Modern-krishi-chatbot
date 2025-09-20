@@ -12,7 +12,7 @@ import {
 
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
-const API_URL = 'http://192.168.1.4:8080/ask';
+const API_URL = `${process.env.EXPO_PUBLIC_API_URL}/ask`;
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
