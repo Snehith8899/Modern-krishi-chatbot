@@ -13,6 +13,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Connect to MongoDB
+// NOTE: Ensure process.env.MONGO_URI is correctly set in your .env file
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected successfully'))
   .catch(err => console.error('MongoDB connection error:', err));
@@ -28,7 +29,7 @@ const upload = multer({ storage: storage });
 // Google Generative AI setup
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// FIX APPLIED: Using the simplified model name 'gemini-1.5-flash'
+// Using the simplified model name 'gemini-1.5-flash'
 const model = genAI.getGenerativeModel({
   model: 'gemini-1.5-flash', 
   generationConfig: { temperature: 0.7, maxOutputTokens: 2000 },
@@ -36,7 +37,7 @@ const model = genAI.getGenerativeModel({
 });
 
 // Simple in-memory storage for chat sessions (for history/context persistence)
-// NOTE: For production, this should be replaced with database-backed history retrieval
+// IMPORTANT: For production, this should be replaced with database-backed history retrieval
 const chatSessions = new Map();
 
 // Root Endpoint
@@ -66,8 +67,9 @@ app.post('/ask', async (req, res) => {
       chatSessions.set(userId, chat);
     }
 
-    const result = await chat.sendMessage({ message: query });
-    const text = result.response.text; // Access the text property directly
+    // FIX: Pass the 'query' string directly to sendMessage
+    const result = await chat.sendMessage(query);
+    const text = result.response.text; 
 
     // Save message to MongoDB only after a successful AI response
     const newMessage = new Message({ userId, query, reply: text });
@@ -77,7 +79,6 @@ app.post('/ask', async (req, res) => {
 
   } catch (error) {
     console.error('Error generating response:', error);
-    // Note: If the error is due to an expired/incorrect model name, this catch block handles it.
     res.status(500).json({ error: 'Failed to get a response from the AI. Check API key and model availability.' });
   }
 });
@@ -110,7 +111,7 @@ app.post('/ask-multimodal', upload.single('media'), async (req, res) => {
     }
     
     // Add query part
-    parts.push(query || "Describe this image and provide agricultural advice based on it.");
+    parts.push({ text: query || "Describe this image and provide agricultural advice based on it." });
     
     // Note: generateContent does not maintain chat history
     const result = await model.generateContent({ contents: parts });
